@@ -25,6 +25,7 @@
 # Delphi compiler-generated binaries (safe to delete)
 *.exe
 *.dll
+
 *.bpl
 *.bpi
 *.dcp
@@ -55,3 +56,199 @@ __history/
 
 # Castalia statistics file
 *.stat
+
+unit IWUnit1;
+{PUBDIST}
+
+interface
+
+uses
+  IWAppForm, IWApplication, IWTypes, IWCompEdit, IWDBStdCtrls, IWExtCtrls,
+  IWDBExtCtrls, IWGrids, IWDBGrids, Classes, Controls, IWControl,
+  IWCompButton, IWCompListbox, DB, DBTables, IWCompDynamicChart,
+  IWClientSideDatasetDBLink, IWClientSideDatasetBase, IWClientSideDataset,
+  IWCompDynamicChartLegend, jpeg, IWCompLabel, TeEngine, Series, ExtCtrls,
+  TeeProcs, Chart, DbChart, IWLayoutMgr, IWTemplateProcessorHTML,sysutils,iwinit,iwunit2,
+  IWCompFlash, IWLayoutMgrForm;
+
+type
+  TformMain = class(TIWAppForm)
+    IWDBGrid1: TIWDBGrid;
+    IWComboBox2: TIWComboBox;
+    IWComboBox3: TIWComboBox;
+    IWButton1: TIWButton;
+    IWComboBox1: TIWComboBox;
+    DataSource1: TDataSource;
+    Query1: TQuery;
+    IWButton2: TIWButton;
+    IWButton3: TIWButton;
+    IWImage1: TIWImage;
+    IWLabel1: TIWLabel;
+    IWLabel2: TIWLabel;
+    IWLabel3: TIWLabel;
+    IWLabel4: TIWLabel;
+    IWLabel5: TIWLabel;
+    IWLabel6: TIWLabel;
+    IWLabel7: TIWLabel;
+    IWLabel8: TIWLabel;
+    Query2: TQuery;
+    IWTemplateProcessorHTML1: TIWTemplateProcessorHTML;
+    IWComboBox4: TIWComboBox;
+    IWComboBox5: TIWComboBox;
+    IWButton5: TIWButton;
+    IWLabel9: TIWLabel;
+    IWComboBox6: TIWComboBox;
+    IWLabel10: TIWLabel;
+    IWImage2: TIWImage;
+    IWButton4: TIWButton;
+    IWFlash1: TIWFlash;
+    IWLayoutMgrForm1: TIWLayoutMgrForm;
+    procedure IWButton1Click(Sender: TObject);
+    procedure IWButton2Click(Sender: TObject);
+    procedure IWButton3Click(Sender: TObject);
+    procedure IWAppFormCreate(Sender: TObject);
+    procedure IWButton4Click(Sender: TObject);
+    procedure IWButton5Click(Sender: TObject);
+    procedure IWComboBox6Change(Sender: TObject);
+  public
+  end;
+
+implementation
+{$R *.dfm}
+
+uses
+  ServerController;
+
+procedure TformMain.IWButton1Click(Sender: TObject);
+begin
+  query1.close;
+  query1.SQL.Clear;
+  query1.SQL.add('select * from Thour');
+  query1.sql.add('where time1 > :time1');
+  query1.sql.add('and time1 < :time2');
+  query1.sql.add('order by time1');
+  query1.parambyname('time1').asstring:=IWComboBox1.text+IWComboBox3.text+IWComboBox2.text+'0500';
+  query1.ParamByName('time2').asstring:=IWComboBox1.text+IWComboBox3.text+IWComboBox2.text+'1900';
+  query1.open;
+end;
+
+procedure TformMain.IWButton2Click(Sender: TObject);
+begin
+  query1.close;
+  query1.SQL.Clear;
+  query1.SQL.add('select * from Tmonth');
+  query1.sql.add('where time1 > :time1');
+  query1.sql.add('and time1 < :time2');
+  query1.sql.add('order by time1');
+  query1.parambyname('time1').asstring:=IWComboBox1.text+'00';
+  query1.ParamByName('time2').asstring:=IWComboBox1.text+'13';
+  query1.open;
+end;
+
+procedure TformMain.IWButton3Click(Sender: TObject);
+begin
+  query1.close;
+  query1.SQL.Clear;
+  query1.SQL.add('select * from Tday');
+  query1.sql.add('where time1 > :time1');
+  query1.sql.add('and time1 < :time2');
+  query1.sql.add('order by time1');
+  query1.parambyname('time1').asstring:=IWComboBox1.text+IWComboBox3.text+'0000';
+  query1.ParamByName('time2').asstring:=IWComboBox1.text+IWComboBox3.text+'3200';
+  query1.open;
+end;
+
+procedure TformMain.IWAppFormCreate(Sender: TObject);
+var
+  hour1,time1,str,s:string;
+  kg,m:real;
+begin
+  str:= timetostr(time);
+  hour1:= copy(str,1,2)+'00';
+  IWComboBox4.itemindex:=strtoint(copy(str,1,2))-6;
+  IWComboBox5.itemindex:=strtoint(copy(str,4,2));
+  str:= datetostr(date);
+  time1:=copy(str,1,4) + copy(str,6,2)+ copy(str,9,2)+hour1;
+  IWComboBox1.itemindex:=strtoint(copy(str,1,4))-2007;
+  IWComboBox3.itemindex:=strtoint(copy(str,6,2))-1;
+  IWComboBox2.itemindex:=strtoint(copy(str,9,2))-1;
+  query2.close;
+  query2.SQL.Clear;
+  query2.SQL.add('select Time1,ETotal,RAD1,Temp1,Pac from Tdatamin');
+  query2.sql.add('where time1 > :time1');
+  query2.sql.add('and invno = 1');
+  query2.sql.add('order by time1');
+  query2.parambyname('time1').asstring:=time1;
+  query2.open;
+  query2.last;
+//  IWLabel1.Caption:='';
+  s:=query2.Fields[0].asstring;
+//  s:=time1;
+  IWLabel2.Caption:=copy(s,1,4)+'/'+copy(s,5,2)+'/'+copy(s,7,2)+'  ' +copy(s,9,2)+':'+copy(s,11,2);
+  IWLabel3.Caption:=query2.Fields[1].asstring;
+  IWLabel4.Caption:=query2.Fields[2].asstring;
+  IWLabel5.Caption:=query2.Fields[3].asstring;
+  IWLabel6.Caption:=floattostr(query2.Fields[4].asfloat/1000);
+  m:=query2.Fields[1].asfloat*3;
+  kg:=query2.Fields[1].asfloat*2.3;
+  IWLabel7.Caption:=floattostr(m);
+  IWLabel8.Caption:=floattostr(kg);
+end;
+
+procedure TformMain.IWButton4Click(Sender: TObject);
+var
+  newform:tformmain1;
+begin
+  TformMain(rwebapplication.activeform).release;
+  newform:=tformmain1.create(rwebapplication);
+  newform.show;
+{  query1.close;
+  query1.SQL.Clear;
+  query1.SQL.add('select * from Tmin');
+  query1.sql.add('where time1 > :time1');
+  query1.sql.add('and time1 < :time2');
+  query1.sql.add('order by time1');
+  query1.parambyname('time1').asstring:=IWComboBox1.text+IWComboBox3.text+IWComboBox2.text+IWComboBox4.text+'00';
+  query1.ParamByName('time2').asstring:=IWComboBox1.text+IWComboBox3.text+IWComboBox2.text+IWComboBox4.text+'59';
+  query1.open;
+}
+end;
+
+procedure TformMain.IWButton5Click(Sender: TObject);
+var
+  time1,s:string;
+  kg,m:real;
+  no:integer;
+begin
+  time1:=IWComboBox1.text+IWComboBox3.text+IWComboBox2.text+IWComboBox4.text+IWComboBox5.text;
+  no:=IWComboBox6.itemindex+1;
+  query2.close;
+  query2.SQL.Clear;
+  query2.SQL.add('select Time1,ETotal,RAD1,Temp1,Pac from Tdatamin');
+  query2.sql.add('where time1 = :time1');
+  query2.sql.add('and invno = :no');
+  query2.parambyname('time1').asstring:=time1;
+  query2.parambyname('no').asinteger:=no;
+  query2.open;
+  s:=query2.Fields[0].asstring;
+  IWLabel2.Caption:=copy(s,1,4)+'/'+copy(s,5,2)+'/'+copy(s,7,2)+'  ' +copy(s,9,2)+':'+copy(s,11,2);
+  IWLabel3.Caption:=query2.Fields[1].asstring;
+  IWLabel4.Caption:=query2.Fields[2].asstring;
+  IWLabel5.Caption:=query2.Fields[3].asstring;
+  IWLabel6.Caption:=floattostr(query2.Fields[4].asfloat/1000);
+  m:=query2.Fields[1].asfloat*3;
+  kg:=query2.Fields[1].asfloat*2.3;
+  IWLabel7.Caption:=floattostr(m);
+  IWLabel8.Caption:=floattostr(kg);
+
+end;
+
+procedure TformMain.IWComboBox6Change(Sender: TObject);
+begin
+  if IWComboBox6.ItemIndex= 0 then IWLabel10.Caption:='KACO 4501-XI';
+  if IWComboBox6.ItemIndex= 1 then IWLabel10.Caption:='XANTREX 2548';
+  if IWComboBox6.ItemIndex= 2 then IWLabel10.Caption:='PHOENIXTEC SV6000';
+  if IWComboBox6.ItemIndex= 3 then IWLabel10.Caption:='DELTA PV3.6';
+end;
+
+end.
